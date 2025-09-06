@@ -41,6 +41,8 @@ dependencies:
   image: ^4.5.4
   gallery_saver_plus: ^3.2.9
   package_info_plus: ^8.3.1
+  provider: ^6.1.5+1
+  shared_preferences: ^2.5.3
 
 dev_dependencies:
   flutter_test:

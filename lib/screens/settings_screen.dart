@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:provider/provider.dart';
+import '../theme/theme_provider.dart';
 import 'about_screen.dart';
 
 class SettingsScreen extends StatelessWidget {
@@ -34,8 +36,63 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 
+  void _showThemeDialog(BuildContext context, ThemeProvider themeProvider) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return SimpleDialog(
+          title: const Text('选择主题'),
+          children: [
+            RadioListTile<ThemeMode>(
+              title: const Text('跟随系统'),
+              value: ThemeMode.system,
+              groupValue: themeProvider.themeMode,
+              onChanged: (mode) {
+                if (mode != null) themeProvider.setTheme(mode);
+                Navigator.pop(context);
+              },
+            ),
+            RadioListTile<ThemeMode>(
+              title: const Text('浅色模式'),
+              value: ThemeMode.light,
+              groupValue: themeProvider.themeMode,
+              onChanged: (mode) {
+                if (mode != null) themeProvider.setTheme(mode);
+                Navigator.pop(context);
+              },
+            ),
+            RadioListTile<ThemeMode>(
+              title: const Text('深色模式'),
+              value: ThemeMode.dark,
+              groupValue: themeProvider.themeMode,
+              onChanged: (mode) {
+                if (mode != null) themeProvider.setTheme(mode);
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
+
+    String subtitle;
+    switch (themeProvider.themeMode) {
+      case ThemeMode.system:
+        subtitle = "跟随系统";
+        break;
+      case ThemeMode.light:
+        subtitle = "浅色模式";
+        break;
+      case ThemeMode.dark:
+        subtitle = "深色模式";
+        break;
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('设置'),
@@ -47,12 +104,8 @@ class SettingsScreen extends StatelessWidget {
           ListTile(
             leading: const Icon(Icons.color_lens),
             title: const Text('主题'),
-            subtitle: const Text('切换浅色 / 深色模式'),
-            onTap: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('主题切换功能未实现')),
-              );
-            },
+            subtitle: Text(subtitle),
+            onTap: () => _showThemeDialog(context, themeProvider),
           ),
           const Divider(height: 1),
           FutureBuilder<PackageInfo>(
