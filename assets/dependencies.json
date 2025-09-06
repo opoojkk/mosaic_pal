@@ -1,0 +1,76 @@
+{
+  "dependencies": [
+    {
+      "name": "flutter",
+      "version": "",
+      "description": "Flutter SDK — 开源跨平台 UI 软件开发工具包，由 Google 提供。",
+      "license": "BSD-3-Clause"
+    },
+    {
+      "name": "cupertino_icons",
+      "version": "^1.0.8",
+      "description": "Cupertino 风格图标资源集，用于 Flutter 的 iOS 样式控件。",
+      "license": "BSD-3-Clause"
+    },
+    {
+      "name": "image_picker",
+      "version": "^1.2.0",
+      "description": "Flutter 插件，用于从设备图库选择图像/视频或使用相机拍摄。",
+      "license": "Apache-2.0, BSD-3-Clause"
+    },
+    {
+      "name": "path_provider",
+      "version": "^2.1.5",
+      "description": "Flutter 插件，用于获取常用的文件系统路径（如临时目录、文档目录）。",
+      "license": "BSD-3-Clause"
+    },
+    {
+      "name": "permission_handler",
+      "version": "^12.0.1",
+      "description": "跨平台权限管理插件，用于请求和检查权限状态，并可引导用户进入应用设置。",
+      "license": "MIT"
+    },
+    {
+      "name": "image",
+      "version": "^4.5.4",
+      "description": "Dart 图像处理库，可加载、处理、保存多种图像格式（用于服务器和 Web）。",
+      "license": "MIT"
+    },
+    {
+      "name": "gallery_saver_plus",
+      "version": "^3.2.9",
+      "description": "保存图片/视频到设备相册（Android Gallery 或 iOS Photos）。",
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "package_info_plus",
+      "version": "^8.3.1",
+      "description": "查询应用包信息的插件，例如 iOS 的 CFBundleVersion 或 Android 的 versionCode。",
+      "license": "BSD-3-Clause"
+    },
+    {
+      "name": "flutter_test",
+      "version": "",
+      "description": "Flutter 官方提供的测试框架，用于编写与运行 Flutter 应用的单元和 widget 测试。",
+      "license": "BSD-3-Clause"
+    },
+    {
+      "name": "flutter_launcher_icons",
+      "version": "^0.14.4",
+      "description": "简化 Flutter 应用启动图标生成与配置的命令行工具。",
+      "license": "MIT"
+    },
+    {
+      "name": "yaml",
+      "version": "^3.1.2",
+      "description": "用于解析和生成 YAML 文件的 Dart 库。",
+      "license": "MIT"
+    },
+    {
+      "name": "flutter_lints",
+      "version": "^6.0.0",
+      "description": "推荐用于 Flutter 应用、包和插件的 lint 规则集合，鼓励良好的编码实践。",
+      "license": "BSD-3-Clause"
+    }
+  ]
+}

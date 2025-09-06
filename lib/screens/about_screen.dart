@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dependencies_screen.dart';
 
 class AboutScreen extends StatelessWidget {
   const AboutScreen({super.key});
@@ -10,29 +11,34 @@ class AboutScreen extends StatelessWidget {
         title: const Text('关于'),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('作者',
-                style: Theme.of(context).textTheme.titleLarge),
-            const SizedBox(height: 8),
-            const Text('opoojkk'),
-            const SizedBox(height: 24),
-
-            Text('仓库',
-                style: Theme.of(context).textTheme.titleLarge),
-            const SizedBox(height: 8),
-            const Text('https://github.com/opoojkk/mosaic_pal'),
-            const SizedBox(height: 24),
-
-            Text('开源协议',
-                style: Theme.of(context).textTheme.titleLarge),
-            const SizedBox(height: 8),
-            const Text('MIT License'),
-          ],
-        ),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          const ListTile(
+            leading: Icon(Icons.person),
+            title: Text('作者'),
+            subtitle: Text('Your Name'),
+          ),
+          const Divider(),
+          const ListTile(
+            leading: Icon(Icons.link),
+            title: Text('仓库'),
+            subtitle: Text('https://github.com/your-repo'),
+          ),
+          const Divider(),
+          ListTile(
+            leading: const Icon(Icons.article),
+            title: const Text('开源协议'),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const DependenciesScreen(),
+                ),
+              );
+            },
+          ),
+        ],
       ),
     );
   }
