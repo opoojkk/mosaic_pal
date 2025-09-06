@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'mosaic_editor.dart';
+import 'settings_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -38,6 +39,18 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         title: const Text('马赛克编辑器'),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings),
+            tooltip: '设置',
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const SettingsScreen()),
+              );
+            },
+          ),
+        ],
       ),
       body: Center(
         child: Column(
