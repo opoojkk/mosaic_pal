@@ -1,10 +1,12 @@
-import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:path_provider/path_provider.dart';
 import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
+
+import 'package:flutter/material.dart';
+import 'package:gallery_saver_plus/gallery_saver.dart';
 import 'package:image/image.dart' as img;
+import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 
 void main() {
   runApp(const MosaicApp());
@@ -49,9 +51,9 @@ class _HomeScreenState extends State<HomeScreen> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('选择图片失败: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('选择图片失败: $e')));
       }
     }
   }
@@ -73,10 +75,7 @@ class _HomeScreenState extends State<HomeScreen> {
               color: Theme.of(context).colorScheme.primary,
             ),
             const SizedBox(height: 32),
-            Text(
-              '选择图片开始编辑',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
+            Text('选择图片开始编辑', style: Theme.of(context).textTheme.headlineMedium),
             const SizedBox(height: 16),
             Text(
               '支持手势滑动添加马赛克效果',
@@ -140,7 +139,10 @@ class _MosaicEditorState extends State<MosaicEditor> {
         _originalImageBytes = bytes;
         _processedImageBytes = bytes;
         _displayImage = frame.image;
-        _imageSize = Size(frame.image.width.toDouble(), frame.image.height.toDouble());
+        _imageSize = Size(
+          frame.image.width.toDouble(),
+          frame.image.height.toDouble(),
+        );
         _isLoading = false;
       });
     } catch (e) {
@@ -148,9 +150,9 @@ class _MosaicEditorState extends State<MosaicEditor> {
         _isLoading = false;
       });
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('加载图片失败: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('加载图片失败: $e')));
       }
     }
   }
@@ -195,7 +197,11 @@ class _MosaicEditorState extends State<MosaicEditor> {
       // 逐个应用操作
       for (int i = 0; i <= _currentOperationIndex; i++) {
         if (i < _operations.length) {
-          currentBytes = await _applyMosaicOperation(currentBytes, _operations[i], canvasSize);
+          currentBytes = await _applyMosaicOperation(
+            currentBytes,
+            _operations[i],
+            canvasSize,
+          );
         }
       }
 
@@ -209,14 +215,18 @@ class _MosaicEditorState extends State<MosaicEditor> {
       });
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('处理图片失败: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('处理图片失败: $e')));
       }
     }
   }
 
-  Future<Uint8List> _applyMosaicOperation(Uint8List imageBytes, MosaicOperation operation, Size canvasSize) async {
+  Future<Uint8List> _applyMosaicOperation(
+    Uint8List imageBytes,
+    MosaicOperation operation,
+    Size canvasSize,
+  ) async {
     try {
       // 解码图像
       img.Image? image = img.decodeImage(imageBytes);
@@ -229,7 +239,9 @@ class _MosaicEditorState extends State<MosaicEditor> {
       final scaleX = _imageSize.width / canvasSize.width;
       final scaleY = _imageSize.height / canvasSize.height;
 
-      print('Applying mosaic: points=${operation.points.length}, mosaicSize=$mosaicSize, scale=($scaleX, $scaleY)');
+      print(
+        'Applying mosaic: points=${operation.points.length}, mosaicSize=$mosaicSize, scale=($scaleX, $scaleY)',
+      );
 
       // 创建一个Set来存储已处理的区域，避免重复处理
       Set<String> processedRegions = {};
@@ -242,10 +254,18 @@ class _MosaicEditorState extends State<MosaicEditor> {
         final imageY = (point.dy * scaleY).clamp(0.0, _imageSize.height - 1);
 
         final brushRadius = operation.brushSize * scaleX / 2;
-        final left = (imageX - brushRadius).clamp(0.0, _imageSize.width - 1).toInt();
-        final top = (imageY - brushRadius).clamp(0.0, _imageSize.height - 1).toInt();
-        final right = (imageX + brushRadius).clamp(0.0, _imageSize.width - 1).toInt();
-        final bottom = (imageY + brushRadius).clamp(0.0, _imageSize.height - 1).toInt();
+        final left = (imageX - brushRadius)
+            .clamp(0.0, _imageSize.width - 1)
+            .toInt();
+        final top = (imageY - brushRadius)
+            .clamp(0.0, _imageSize.height - 1)
+            .toInt();
+        final right = (imageX + brushRadius)
+            .clamp(0.0, _imageSize.width - 1)
+            .toInt();
+        final bottom = (imageY + brushRadius)
+            .clamp(0.0, _imageSize.height - 1)
+            .toInt();
 
         // 创建区域标识符，避免重复处理相同区域
         final regionKey = '${left ~/ mosaicSize}_${top ~/ mosaicSize}';
@@ -260,7 +280,9 @@ class _MosaicEditorState extends State<MosaicEditor> {
 
       // 编码回 Uint8List
       final encodedImage = img.encodePng(image);
-      print('Mosaic applied successfully, encoded image size: ${encodedImage.length}');
+      print(
+        'Mosaic applied successfully, encoded image size: ${encodedImage.length}',
+      );
       return Uint8List.fromList(encodedImage);
     } catch (e) {
       print('Error applying mosaic: $e');
@@ -269,7 +291,14 @@ class _MosaicEditorState extends State<MosaicEditor> {
     }
   }
 
-  void _applyMosaicToRegion(img.Image image, int left, int top, int right, int bottom, int mosaicSize) {
+  void _applyMosaicToRegion(
+    img.Image image,
+    int left,
+    int top,
+    int right,
+    int bottom,
+    int mosaicSize,
+  ) {
     // 确保边界在图像范围内
     left = left.clamp(0, image.width - 1);
     top = top.clamp(0, image.height - 1);
@@ -281,8 +310,13 @@ class _MosaicEditorState extends State<MosaicEditor> {
         // 计算马赛克块的边界
         final blockRight = (x + mosaicSize).clamp(x, image.width);
         final blockBottom = (y + mosaicSize).clamp(y, image.height);
-        
-        if (x >= image.width || y >= image.height || blockRight <= x || blockBottom <= y) continue;
+
+        if (x >= image.width ||
+            y >= image.height ||
+            blockRight <= x ||
+            blockBottom <= y) {
+          continue;
+        }
 
         // 获取块的平均颜色
         int totalR = 0, totalG = 0, totalB = 0, totalA = 0;
@@ -293,10 +327,10 @@ class _MosaicEditorState extends State<MosaicEditor> {
           for (int bx = x; bx < blockRight; bx++) {
             if (bx < image.width && by < image.height) {
               final pixel = image.getPixel(bx, by);
-              totalR += img.getRed(pixel);
-              totalG += img.getGreen(pixel);
-              totalB += img.getBlue(pixel);
-              totalA += img.getAlpha(pixel);
+              totalR += pixel.r.toInt();
+              totalG += pixel.g.toInt();
+              totalB += pixel.b.toInt();
+              totalA += pixel.a.toInt();
               pixelCount++;
             }
           }
@@ -307,7 +341,7 @@ class _MosaicEditorState extends State<MosaicEditor> {
           final avgG = (totalG / pixelCount).round().clamp(0, 255);
           final avgB = (totalB / pixelCount).round().clamp(0, 255);
           final avgA = (totalA / pixelCount).round().clamp(0, 255);
-          final avgColor = img.getColor(avgR, avgG, avgB, avgA);
+          final avgColor = img.ColorInt32.rgba(avgR, avgG, avgB, avgA);
 
           // 用平均颜色填充整个块
           for (int by = y; by < blockBottom; by++) {
@@ -321,7 +355,6 @@ class _MosaicEditorState extends State<MosaicEditor> {
       }
     }
   }
-
 
   void _showBrushSizeDialog() {
     showDialog(
@@ -396,32 +429,30 @@ class _MosaicEditorState extends State<MosaicEditor> {
         directory = await getApplicationDocumentsDirectory();
       }
 
-      if (directory == null) {
-        directory = await getApplicationDocumentsDirectory();
-      }
+      directory ??= await getApplicationDocumentsDirectory();
 
       final fileName = 'mosaic_${DateTime.now().millisecondsSinceEpoch}.png';
       final file = File('${directory.path}/$fileName');
 
       await file.writeAsBytes(_processedImageBytes!);
+      final result = await GallerySaver.saveImage(
+        file.path,
+      );
 
-      if (mounted) {
+      if (mounted && (result ?? false)) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('图片已保存到: ${file.path}'),
             duration: const Duration(seconds: 3),
-            action: SnackBarAction(
-              label: '确定',
-              onPressed: () {},
-            ),
+            action: SnackBarAction(label: '确定', onPressed: () {}),
           ),
         );
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('保存失败: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('保存失败: $e')));
       }
     }
   }
@@ -445,7 +476,9 @@ class _MosaicEditorState extends State<MosaicEditor> {
           ),
           IconButton(
             icon: const Icon(Icons.redo),
-            onPressed: _currentOperationIndex < _operations.length - 1 ? _redo : null,
+            onPressed: _currentOperationIndex < _operations.length - 1
+                ? _redo
+                : null,
             tooltip: '重做',
           ),
           IconButton(
@@ -458,12 +491,12 @@ class _MosaicEditorState extends State<MosaicEditor> {
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _displayImage != null
-              ? MosaicCanvas(
-                  image: _displayImage!,
-                  brushSize: _brushSize,
-                  onMosaicOperation: _addMosaicOperation,
-                )
-              : const Center(child: Text('图片加载失败')),
+          ? MosaicCanvas(
+              image: _displayImage!,
+              brushSize: _brushSize,
+              onMosaicOperation: _addMosaicOperation,
+            )
+          : const Center(child: Text('图片加载失败')),
     );
   }
 }
@@ -524,7 +557,10 @@ class _MosaicCanvasState extends State<MosaicCanvas> {
               },
               onPanEnd: (details) {
                 if (_currentStroke.isNotEmpty) {
-                  widget.onMosaicOperation(List.from(_currentStroke), _canvasSize);
+                  widget.onMosaicOperation(
+                    List.from(_currentStroke),
+                    _canvasSize,
+                  );
                   setState(() {
                     _currentStroke.clear();
                     _isDrawing = false;
@@ -564,7 +600,12 @@ class ImagePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     // 绘制图片
-    final src = Rect.fromLTWH(0, 0, image.width.toDouble(), image.height.toDouble());
+    final src = Rect.fromLTWH(
+      0,
+      0,
+      image.width.toDouble(),
+      image.height.toDouble(),
+    );
     final dst = Rect.fromLTWH(0, 0, size.width, size.height);
     canvas.drawImageRect(image, src, dst, Paint());
 
@@ -596,11 +637,7 @@ class ImagePainter extends CustomPainter {
           ..style = PaintingStyle.stroke
           ..strokeWidth = 2;
 
-        canvas.drawCircle(
-          currentStroke.last,
-          brushSize / 2,
-          previewPaint,
-        );
+        canvas.drawCircle(currentStroke.last, brushSize / 2, previewPaint);
       }
     }
   }
